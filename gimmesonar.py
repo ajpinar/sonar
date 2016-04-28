@@ -12,6 +12,8 @@ ser = serial.Serial(
 	)
 ser.close()
 
+max_range = 5.0
+
 # Define switch data command bytes
 HEADER_1 = 0xFE # DO NOT CHANGE
 HEADER_2 = 0x44 # DO NOT CHANGE
@@ -19,7 +21,7 @@ HEAD_ID = 0x11 # 0x11, 0x12, 0x13 allowed
 RANGE = 0x05 # 5, 10, 20, 30, 40, 50 meters allowed
 RESERVED = 0x00 # DO NOT CHANGE
 MASTER_SLAVE = 0x00 # probably shouldn't change
-START_GAIN = 0x06 # 0 to 40dB in 1dB increments
+START_GAIN = 0x40 # 0 to 40dB in 1dB increments
 ABSORPTION = 0x14 # 20=0.2dB/m
 PULSE_LENGTH = 0x64 # length of acoustic tx pulse, 1 to 255 microseconds in 1us increments
 PROFILE_MINRANGE = 0x00 # 0 to 25 (0 to 25 meters in 0.1 meter increments) Min range for profile point digitization
@@ -68,7 +70,8 @@ plt.xlabel('Distance (meters)')
 plt.ylabel('Return')
 plt.show()
 
-for a in range(5555555):
+#for a in range(100):
+while(1):
 	ser.open()
 	ser.write( command_to_send )
 
@@ -76,9 +79,10 @@ for a in range(5555555):
 	ser.close()
 
 	range_returns = zeros(252)
-	range_bins = linspace(0.0, 5.0, 252)
+	range_bins = linspace(0.0, max_range, 252)
 	range_returns = fromstring(readback[12:-1], dtype='int8')
 
 	#IPython.embed()
+	plt.cla()
 	plt.plot(range_bins,range_returns)
 	plt.pause(0.5)
